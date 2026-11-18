@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block titulo %}Contraseña restablecida{% endblock %}
+{% block contenido_publico %}
+<div class="max-w-md w-full mx-auto bg-white rounded-lg shadow border border-palestra-borde p-6 md:p-8 text-center">
+  <h1 class="text-xl font-bold text-palestra-primario-900 mt-0 mb-2">
+    Contraseña actualizada con éxito
+  </h1>
+  <p class="text-sm text-palestra-secundario mb-6">
+    Su contraseña ha sido restablecida correctamente y protegida mediante hash Argon2id. Ya puede iniciar sesión con su nueva credencial.
+  </p>
+  <a href="{% url 'cuentas:iniciar_sesion' %}" class="btn-palestra-primario w-full">
+    Ir al inicio de sesión
+  </a>
+</div>
+{% endblock %}

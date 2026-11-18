@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block titulo %}Acceso denegado (403){% endblock %}
+{% block contenido %}
+<div class="max-w-lg mx-auto bg-white rounded-lg shadow-sm border border-palestra-borde p-8 text-center">
+  <span class="insignia insignia-peligro mb-3">Código 403 — Acceso Denegado</span>
+  <h1 class="text-2xl font-bold text-palestra-primario-900 mt-0 mb-2">
+    No tiene permisos para acceder a esta sección
+  </h1>
+  <p class="text-sm text-palestra-secundario mb-6">
+    Su perfil actual ({{ user.get_rol_display }}) no cuenta con autorización para realizar esta operación o visualizar este recurso.
+  </p>
+  <a href="{% url 'cuentas:panel_inicio' %}" class="btn-palestra-primario">
+    Volver a mi panel de inicio
+  </a>
+</div>
+{% endblock %}
+{% block contenido_publico %}
+<div class="max-w-lg mx-auto bg-white rounded-lg shadow border border-palestra-borde p-8 text-center">
+  <span class="insignia insignia-peligro mb-3">Código 403 — Acceso Denegado</span>
+  <h1 class="text-2xl font-bold text-palestra-primario-900 mt-0 mb-2">
+    Operación no autorizada
+  </h1>
+  <p class="text-sm text-palestra-secundario mb-6">
+    No cuenta con los permisos necesarios para acceder al recurso solicitado.
+  </p>
+  <a href="{% url 'cuentas:iniciar_sesion' %}" class="btn-palestra-primario">
+    Ir al inicio de sesión
+  </a>
+</div>
+{% endblock %}

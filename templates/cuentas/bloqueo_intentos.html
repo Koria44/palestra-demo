@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block titulo %}Acceso temporalmente bloqueado{% endblock %}
+{% block contenido_publico %}
+<div class="max-w-md w-full mx-auto bg-white rounded-lg shadow border border-palestra-borde p-6 md:p-8 text-center">
+  <div class="inline-flex items-center justify-center p-3 rounded-full insignia-peligro mb-4">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+    </svg>
+  </div>
+  <h1 class="text-xl font-bold text-palestra-primario-900 mt-0 mb-2">
+    Acceso temporalmente restringido
+  </h1>
+  <p class="text-sm text-palestra-secundario mb-6">
+    Por medidas de seguridad institucional, se ha bloqueado temporalmente el inicio de sesión tras superar el número máximo de intentos fallidos permitidos. Por favor, intente nuevamente pasados 15 minutos o utilice la opción de recuperación de contraseña.
+  </p>
+  <a href="{% url 'cuentas:iniciar_sesion' %}" class="btn-palestra-secundario w-full">
+    Volver al inicio de sesión
+  </a>
+</div>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block titulo %}Mi Panel Deportivo{% endblock %}
+{% block contenido %}
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+  <div>
+    <h1 class="text-2xl font-bold text-palestra-primario-900 m-0">
+      Mi Resumen Deportivo
+    </h1>
+    <p class="text-sm text-palestra-secundario mt-1 mb-0">
+      Consulta personal de disciplinas inscritas, porcentaje de asistencia y evolución de rendimiento.
+    </p>
+  </div>
+  <div>
+    <a href="/seguimiento/estudiante/mi-asistencia/" class="btn-palestra-primario">
+      Ver detalle de asistencia y gráfico
+    </a>
+  </div>
+</div>
+
+<!-- Indicadores personales del estudiante -->
+<section aria-label="Mis indicadores deportivos" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+  <div class="bg-white rounded-lg shadow-sm border border-palestra-borde p-6">
+    <span class="text-xs font-semibold uppercase tracking-wider text-palestra-secundario">Disciplinas Inscritas Activas</span>
+    <p class="text-3xl font-bold text-palestra-primario-900 mt-2 mb-1">{{ inscripciones_activas|length }}</p>
+    <span class="text-xs text-palestra-secundario">Participación deportiva vigente</span>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-sm border border-palestra-borde p-6">
+    <span class="text-xs font-semibold uppercase tracking-wider text-palestra-secundario">Porcentaje de Asistencia</span>
+    <p class="text-3xl font-bold text-palestra-acento-500 mt-2 mb-1">{{ porcentaje_asistencia|floatformat:1 }} %</p>
+    <span class="text-xs text-palestra-secundario">Sobre {{ total_sesiones_registradas }} sesiones registradas</span>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-sm border border-palestra-borde p-6">
+    <span class="text-xs font-semibold uppercase tracking-wider text-palestra-secundario">Promedio de Rendimiento</span>
+    <p class="text-3xl font-bold text-palestra-primario-900 mt-2 mb-1">
+      {% if promedio_rendimiento %}{{ promedio_rendimiento|floatformat:1 }}{% else %}Sin notas{% endif %}
+    </p>
+    <span class="text-xs text-palestra-secundario">Escala 1,0 a 7,0</span>
+  </div>
+</section>
+
+<!-- Mis disciplinas y ultimas evaluaciones -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <section class="bg-white rounded-lg shadow-sm border border-palestra-borde p-6">
+    <h2 class="text-lg font-bold text-palestra-primario-900 mt-0 mb-4">Mis Disciplinas Asignadas</h2>
+    {% if inscripciones_activas %}
+    <div class="flex flex-col gap-3">
+      {% for insc in inscripciones_activas %}
+      <div class="p-4 rounded border border-palestra-borde bg-palestra-fondo">
+        <div class="flex items-center justify-between mb-1">
+          <strong class="text-palestra-primario-900">{{ insc.disciplina.nombre }}</strong>
+          <span class="insignia insignia-exito">Inscrito</span>
+        </div>
+        <p class="text-sm text-palestra-secundario m-0">
+          Horario: {{ insc.disciplina.horario_formateado }} · Lugar: {{ insc.disciplina.lugar }}
+        </p>
+        <p class="text-xs text-palestra-secundario mt-1 mb-0">
+          Entrenador(es):
+          {% for ent in insc.disciplina.entrenadores.all %}
+            {{ ent.nombre_completo }}{% if not forloop.last %}, {% endif %}
+          {% empty %}
+            Por asignar
+          {% endfor %}
+        </p>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-sm text-palestra-secundario m-0">
+      No registra inscripciones activas en disciplinas deportivas actualmente.
+    </p>
+    {% endif %}
+  </section>
+
+  <section class="bg-white rounded-lg shadow-sm border border-palestra-borde p-6">
+    <h2 class="text-lg font-bold text-palestra-primario-900 mt-0 mb-4">Últimas Evaluaciones Registradas</h2>
+    {% if ultimas_evaluaciones %}
+    <div class="tabla-contenedor">
+      <table class="tabla-palestra">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Disciplina</th>
+            <th>Nota</th>
+            <th>Observación</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for eval in ultimas_evaluaciones %}
+          <tr>
+            <td>{{ eval.sesion.fecha|date:"d/m/Y" }}</td>
+            <td>{{ eval.sesion.disciplina.nombre }}</td>
+            <td>
+              <span class="insignia {% if eval.puntaje >= 4.0 %}insignia-exito{% else %}insignia-peligro{% endif %}">
+                {{ eval.puntaje|floatformat:1 }}
+              </span>
+            </td>
+            <td class="text-sm text-palestra-secundario">{{ eval.observacion|default:"—" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="text-sm text-palestra-secundario m-0">
+      Aún no registra evaluaciones de rendimiento en sus sesiones.
+    </p>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

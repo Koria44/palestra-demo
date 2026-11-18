@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block titulo %}Página no encontrada (404){% endblock %}
+{% block contenido %}
+<div class="max-w-lg mx-auto bg-white rounded-lg shadow-sm border border-palestra-borde p-8 text-center">
+  <span class="insignia insignia-alerta mb-3">Código 404 — Recurso no encontrado</span>
+  <h1 class="text-2xl font-bold text-palestra-primario-900 mt-0 mb-2">
+    La página o registro solicitado no existe
+  </h1>
+  <p class="text-sm text-palestra-secundario mb-6">
+    Verifique que la dirección web sea correcta o utilice el menú de navegación lateral.
+  </p>
+  <a href="{% url 'cuentas:panel_inicio' %}" class="btn-palestra-primario">
+    Volver al panel de inicio
+  </a>
+</div>
+{% endblock %}
+{% block contenido_publico %}
+<div class="max-w-lg mx-auto bg-white rounded-lg shadow border border-palestra-borde p-8 text-center">
+  <span class="insignia insignia-alerta mb-3">Código 404 — Recurso no encontrado</span>
+  <h1 class="text-2xl font-bold text-palestra-primario-900 mt-0 mb-2">
+    Página no encontrada
+  </h1>
+  <p class="text-sm text-palestra-secundario mb-6">
+    El recurso solicitado no se encuentra disponible en PALESTRA.
+  </p>
+  <a href="{% url 'cuentas:iniciar_sesion' %}" class="btn-palestra-primario">
+    Ir al inicio de sesión
+  </a>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block titulo %}Error del servidor (500){% endblock %}
+{% block contenido %}
+<div class="max-w-lg mx-auto bg-white rounded-lg shadow-sm border border-palestra-borde p-8 text-center">
+  <span class="insignia insignia-peligro mb-3">Código 500 — Error interno</span>
+  <h1 class="text-2xl font-bold text-palestra-primario-900 mt-0 mb-2">
+    Se produjo un inconveniente al procesar su solicitud
+  </h1>
+  <p class="text-sm text-palestra-secundario mb-6">
+    El incidente ha sido registrado de forma segura sin exponer información técnica interna. Por favor, intente nuevamente en unos instantes.
+  </p>
+  <a href="{% url 'cuentas:panel_inicio' %}" class="btn-palestra-primario">
+    Volver al inicio
+  </a>
+</div>
+{% endblock %}
+{% block contenido_publico %}
+<div class="max-w-lg mx-auto bg-white rounded-lg shadow border border-palestra-borde p-8 text-center">
+  <span class="insignia insignia-peligro mb-3">Código 500 — Error interno</span>
+  <h1 class="text-2xl font-bold text-palestra-primario-900 mt-0 mb-2">
+    Error interno del sistema
+  </h1>
+  <p class="text-sm text-palestra-secundario mb-6">
+    No fue posible completar su solicitud en este momento.
+  </p>
+  <a href="{% url 'cuentas:iniciar_sesion' %}" class="btn-palestra-primario">
+    Ir al inicio de sesión
+  </a>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block titulo %}Activar cuenta institucional{% endblock %}
+{% block contenido_publico %}
+<div class="max-w-md w-full mx-auto bg-white rounded-lg shadow border border-palestra-borde p-6 md:p-8">
+  <h1 class="text-xl font-bold text-palestra-primario-900 mt-0 mb-2">
+    Activación de cuenta en PALESTRA
+  </h1>
+
+  {% if enlace_invalido %}
+  <div class="alert alert-danger" role="alert">
+    <span>El enlace de activación no es válido, ya fue utilizado anteriormente o ha expirado. Solicite un nuevo enlace a la Coordinación Deportiva.</span>
+  </div>
+  <a href="{% url 'cuentas:iniciar_sesion' %}" class="btn-palestra-secundario w-full mt-2">
+    Ir al inicio de sesión
+  </a>
+  {% else %}
+  <p class="text-sm text-palestra-secundario mb-4">
+    Bienvenido(a), <strong>{{ usuario_objetivo.nombre_completo }}</strong> ({{ usuario_objetivo.email }}). Cree su contraseña personal para activar su cuenta. La Coordinación Deportiva nunca conoce ni tiene acceso a esta contraseña.
+  </p>
+
+  <form method="post" novalidate class="flex flex-col gap-4">
+    {% csrf_token %}
+    {% for campo in formulario %}
+    <div>
+      <label for="{{ campo.id_for_label }}" class="block text-sm font-semibold text-palestra-primario-900 mb-1">
+        {{ campo.label }}
+      </label>
+      {{ campo }}
+      {% if campo.errors %}
+      <p class="text-xs text-palestra-peligro-500 mt-1 mb-0">{{ campo.errors.0 }}</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    <button type="submit" class="btn-palestra-acento w-full mt-2">
+      Activar cuenta y guardar contraseña
+    </button>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}
