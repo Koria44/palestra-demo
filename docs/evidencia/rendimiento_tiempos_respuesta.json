@@ -1,0 +1,10 @@
+{
+  "carga_login_ms": 360.53,
+  "panel_coordinador_ms": 146.9,
+  "listado_disciplinas_ms": 56.5,
+  "listado_estudiantes_ms": 45.32,
+  "reporte_global_ms": 109.34,
+  "panel_entrenador_ms": 355.17,
+  "panel_estudiante_ms": 386.46,
+  "historial_estudiante_ms": 66.04
+}
