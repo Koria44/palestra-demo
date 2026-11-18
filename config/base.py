@@ -19,11 +19,18 @@ DEBUG = os.environ.get("DEBUG", "False").lower() in ("true", "1", "yes")
 
 hosts_permitidos = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1")
 ALLOWED_HOSTS = [h.strip() for h in hosts_permitidos.split(",") if h.strip()]
+host_render = os.environ.get("RENDER_EXTERNAL_HOSTNAME", "").strip()
+if host_render and host_render not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(host_render)
 
 origenes_csrf = os.environ.get(
     "CSRF_TRUSTED_ORIGINS", "http://localhost:8000,http://127.0.0.1:8000"
 )
 CSRF_TRUSTED_ORIGINS = [o.strip() for o in origenes_csrf.split(",") if o.strip()]
+if host_render:
+    origen_render = f"https://{host_render}"
+    if origen_render not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(origen_render)
 
 # Aplicaciones instaladas
 INSTALLED_APPS = [
@@ -50,6 +57,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
