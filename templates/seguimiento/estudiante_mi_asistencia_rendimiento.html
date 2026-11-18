@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block titulo %}Mi Asistencia y Rendimiento{% endblock %}
+{% block contenido %}
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+  <div>
+    <h1 class="text-2xl font-bold text-palestra-primario-900 m-0">
+      Mi Rendimiento Acumulado e Historial de Asistencia
+    </h1>
+    <p class="text-sm text-palestra-secundario mt-1 mb-0">
+      Seguimiento individual de evolución deportiva y cumplimiento por sesión (Solo lectura).
+    </p>
+  </div>
+  <div>
+    <a href="/reportes/" class="btn-palestra-secundario">Exportar mi resumen (CSV / PDF)</a>
+  </div>
+</div>
+
+<!-- Filtro por disciplina -->
+<section class="bg-white rounded-lg shadow-sm border border-palestra-borde p-4 mb-6">
+  <form method="get" class="flex flex-col md:flex-row gap-4 items-end">
+    <div class="flex-1 w-full">
+      <label for="id_disciplina" class="block text-xs font-semibold uppercase text-palestra-secundario mb-1">Filtrar por disciplina</label>
+      <select id="id_disciplina" name="disciplina" class="form-select">
+        <option value="">Todas mis disciplinas</option>
+        {% for d in disciplinas_inscritas %}
+        <option value="{{ d.id }}" {% if disciplina_seleccionada == d.id|stringformat:"s" %}selected{% endif %}>{{ d.nombre }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="flex gap-2">
+      <button type="submit" class="btn-palestra-primario">Filtrar</button>
+      <a href="{% url 'seguimiento:estudiante_mi_asistencia' %}" class="btn-palestra-secundario">Ver todas</a>
+    </div>
+  </form>
+</section>
+
+<!-- Resumen numerico -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+  <div class="bg-white rounded-lg shadow-sm border border-palestra-borde p-4">
+    <span class="text-xs font-semibold uppercase text-palestra-secundario">Asistencia Total</span>
+    <p class="text-2xl font-bold text-palestra-acento-500 mt-1 mb-0">{{ porcentaje_asistencia|floatformat:1 }} %</p>
+  </div>
+  <div class="bg-white rounded-lg shadow-sm border border-palestra-borde p-4">
+    <span class="text-xs font-semibold uppercase text-palestra-secundario">Presente / Justificado</span>
+    <p class="text-2xl font-bold text-palestra-primario-900 mt-1 mb-0">{{ presentes }} / {{ justificados }}</p>
+  </div>
+  <div class="bg-white rounded-lg shadow-sm border border-palestra-borde p-4">
+    <span class="text-xs font-semibold uppercase text-palestra-secundario">Ausencias</span>
+    <p class="text-2xl font-bold text-palestra-peligro-500 mt-1 mb-0">{{ ausentes }}</p>
+  </div>
+  <div class="bg-white rounded-lg shadow-sm border border-palestra-borde p-4">
+    <span class="text-xs font-semibold uppercase text-palestra-secundario">Promedio Acumulado</span>
+    <p class="text-2xl font-bold text-palestra-primario-900 mt-1 mb-0">
+      {% if promedio_nota %}{{ promedio_nota|floatformat:1 }}{% else %}—{% endif %}
+    </p>
+  </div>
+</section>
+
+<!-- Grafico de evolucion en el tiempo -->
+<section class="bg-white rounded-lg shadow-sm border border-palestra-borde p-6 mb-6">
+  <h2 class="text-lg font-bold text-palestra-primario-900 mt-0 mb-2">
+    Evolución de Rendimiento en el Tiempo (Escala 1,0 a 7,0)
+  </h2>
+  {% if puntos_grafico %}
+  <div id="grafico-evolucion-rendimiento" data-puntos="{{ puntos_grafico }}" class="w-full"></div>
+  {% else %}
+  <p class="text-sm text-palestra-secundario m-0">
+    Aún no existen suficientes evaluaciones registradas para graficar la evolución temporal.
+  </p>
+  {% endif %}
+</section>
+
+<!-- Tablas de detalle de asistencia y evaluaciones -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <section class="bg-white rounded-lg shadow-sm border border-palestra-borde p-6">
+    <h2 class="text-lg font-bold text-palestra-primario-900 mt-0 mb-4">Detalle de Asistencia por Fecha</h2>
+    {% if asistencias %}
+    <div class="tabla-contenedor">
+      <table class="tabla-palestra">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Disciplina</th>
+            <th>Estado</th>
+            <th>Observación</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for asist in asistencias %}
+          <tr>
+            <td class="font-medium">{{ asist.sesion.fecha|date:"d/m/Y" }}</td>
+            <td>{{ asist.sesion.disciplina.nombre }}</td>
+            <td>
+              {% if asist.estado == 'presente' %}
+              <span class="insignia insignia-exito">Presente</span>
+              {% elif asist.estado == 'justificado' %}
+              <span class="insignia insignia-alerta">Justificado</span>
+              {% else %}
+              <span class="insignia insignia-peligro">Ausente</span>
+              {% endif %}
+            </td>
+            <td class="text-xs text-palestra-secundario">{{ asist.observacion|default:"—" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="text-sm text-palestra-secundario m-0">No registra asistencias en el período.</p>
+    {% endif %}
+  </section>
+
+  <section class="bg-white rounded-lg shadow-sm border border-palestra-borde p-6">
+    <h2 class="text-lg font-bold text-palestra-primario-900 mt-0 mb-4">Detalle de Evaluaciones por Sesión</h2>
+    {% if evaluaciones %}
+    <div class="tabla-contenedor">
+      <table class="tabla-palestra">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Disciplina</th>
+            <th>Puntaje</th>
+            <th>Observación</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ev in evaluaciones %}
+          <tr>
+            <td class="font-medium">{{ ev.sesion.fecha|date:"d/m/Y" }}</td>
+            <td>{{ ev.sesion.disciplina.nombre }}</td>
+            <td>
+              <span class="insignia {% if ev.puntaje >= 4.0 %}insignia-exito{% else %}insignia-peligro{% endif %}">
+                {{ ev.puntaje|floatformat:1 }}
+              </span>
+            </td>
+            <td class="text-xs text-palestra-secundario">{{ ev.observacion|default:"—" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="text-sm text-palestra-secundario m-0">No registra evaluaciones en el período.</p>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block titulo %}Asistencia y Evaluaciones — {{ sesion.disciplina.nombre }}{% endblock %}
+{% block contenido %}
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+  <div>
+    <h1 class="text-2xl font-bold text-palestra-primario-900 m-0">
+      Registro de Asistencia y Evaluación en Lote
+    </h1>
+    <p class="text-sm text-palestra-secundario mt-1 mb-0">
+      <strong>{{ sesion.disciplina.nombre }}</strong> · Fecha: <strong>{{ sesion.fecha|date:"d/m/Y" }}</strong> · Lugar: {{ sesion.disciplina.lugar }}
+    </p>
+  </div>
+  <div class="flex flex-wrap gap-2">
+    {% if editable %}
+    <button type="button" id="btn-marcar-todos-presente" class="btn-palestra-secundario">
+      Marcar todos presentes
+    </button>
+    {% else %}
+    <span class="insignia insignia-neutra">Sesión fuera de la ventana de {{ dias_ventana }} días (Solo lectura)</span>
+    {% endif %}
+    <a href="{% url 'seguimiento:lista_sesiones' %}" class="btn-palestra-secundario">Volver a sesiones</a>
+  </div>
+</div>
+
+<section class="bg-white rounded-lg shadow-sm border border-palestra-borde p-6">
+  {% if filas %}
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <div class="mb-6">
+      <label for="id_tema" class="block text-sm font-semibold text-palestra-primario-900 mb-1">
+        Tema o contenido trabajado en la sesión
+      </label>
+      <input
+        type="text"
+        id="id_tema"
+        name="tema"
+        value="{{ sesion.tema }}"
+        class="form-control"
+        {% if not editable %}disabled{% endif %}
+      >
+    </div>
+
+    <div class="tabla-contenedor">
+      <table class="tabla-palestra">
+        <thead>
+          <tr>
+            <th>Estudiante</th>
+            <th>Estado de Asistencia (Controles táctiles &ge; 44 px)</th>
+            <th>Puntaje (1,0 a 7,0)</th>
+            <th>Observación de Evaluación / Asistencia</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for fila in filas %}
+          <tr>
+            <td>
+              <strong class="text-palestra-primario-900 block">{{ fila.estudiante.nombre_completo }}</strong>
+              <span class="text-xs text-palestra-secundario">{{ fila.estudiante.rut_formateado }} · {{ fila.estudiante.curso_o_carrera }}</span>
+            </td>
+            <td>
+              <div class="flex flex-wrap gap-2" role="radiogroup" aria-label="Asistencia de {{ fila.estudiante.nombre_completo }}">
+                <label class="opcion-asistencia">
+                  <input
+                    type="radio"
+                    name="estado_{{ fila.estudiante.id }}"
+                    value="presente"
+                    {% if fila.estado_asistencia == 'presente' %}checked{% endif %}
+                    {% if not editable %}disabled{% endif %}
+                  >
+                  <span>Presente</span>
+                </label>
+                <label class="opcion-asistencia">
+                  <input
+                    type="radio"
+                    name="estado_{{ fila.estudiante.id }}"
+                    value="ausente"
+                    {% if fila.estado_asistencia == 'ausente' %}checked{% endif %}
+                    {% if not editable %}disabled{% endif %}
+                  >
+                  <span>Ausente</span>
+                </label>
+                <label class="opcion-asistencia">
+                  <input
+                    type="radio"
+                    name="estado_{{ fila.estudiante.id }}"
+                    value="justificado"
+                    {% if fila.estado_asistencia == 'justificado' %}checked{% endif %}
+                    {% if not editable %}disabled{% endif %}
+                  >
+                  <span>Justificado</span>
+                </label>
+              </div>
+            </td>
+            <td style="width: 140px;">
+              <input
+                type="number"
+                name="puntaje_{{ fila.estudiante.id }}"
+                value="{{ fila.puntaje_evaluacion }}"
+                min="1.0"
+                max="7.0"
+                step="0.1"
+                placeholder="Ej.: 6.2"
+                aria-label="Puntaje de {{ fila.estudiante.nombre_completo }}"
+                class="form-control min-h-touch"
+                {% if not editable %}disabled{% endif %}
+              >
+            </td>
+            <td>
+              <input
+                type="text"
+                name="obs_eval_{{ fila.estudiante.id }}"
+                value="{{ fila.observacion_evaluacion }}"
+                placeholder="Observación breve opcional..."
+                aria-label="Observación de {{ fila.estudiante.nombre_completo }}"
+                class="form-control min-h-touch"
+                {% if not editable %}disabled{% endif %}
+              >
+              <input type="hidden" name="obs_asist_{{ fila.estudiante.id }}" value="{{ fila.observacion_asistencia }}">
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if editable %}
+    <div class="flex items-center justify-between pt-6 mt-6 border-t border-palestra-borde">
+      <span class="text-xs text-palestra-secundario">
+        Toda corrección realizada dentro de los {{ dias_ventana }} días queda registrada en la bitácora de auditoría institucional.
+      </span>
+      <button type="submit" class="btn-palestra-primario">
+        Guardar asistencia y evaluaciones en lote
+      </button>
+    </div>
+    {% endif %}
+  </form>
+  {% else %}
+  <p class="text-sm text-palestra-secundario m-0">
+    No hay estudiantes con inscripción activa en esta disciplina para tomar asistencia.
+  </p>
+  {% endif %}
+</section>
+{% endblock %}

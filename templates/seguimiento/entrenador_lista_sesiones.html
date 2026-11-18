@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block titulo %}Historial de Sesiones{% endblock %}
+{% block contenido %}
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+  <div>
+    <h1 class="text-2xl font-bold text-palestra-primario-900 m-0">Historial de Sesiones de Entrenamiento</h1>
+    <p class="text-sm text-palestra-secundario mt-1 mb-0">
+      Sesiones registradas en sus disciplinas. Los registros pueden corregirse dentro de los 7 días posteriores a la fecha de la sesión.
+    </p>
+  </div>
+  <div>
+    <a href="{% url 'seguimiento:crear_sesion' %}" class="btn-palestra-primario">
+      <span>Nueva sesión</span>
+    </a>
+  </div>
+</div>
+
+<section class="bg-white rounded-lg shadow-sm border border-palestra-borde p-4 mb-6">
+  <form method="get" class="flex flex-col md:flex-row gap-4 items-end">
+    <div class="flex-1 w-full">
+      <label for="id_disciplina" class="block text-xs font-semibold uppercase text-palestra-secundario mb-1">Filtrar por disciplina</label>
+      <select id="id_disciplina" name="disciplina" class="form-select">
+        <option value="">Todas mis disciplinas</option>
+        {% for d in disciplinas_propias %}
+        <option value="{{ d.id }}" {% if disciplina_seleccionada == d.id|stringformat:"s" %}selected{% endif %}>{{ d.nombre }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="flex gap-2">
+      <button type="submit" class="btn-palestra-primario">Filtrar</button>
+      <a href="{% url 'seguimiento:lista_sesiones' %}" class="btn-palestra-secundario">Limpiar</a>
+    </div>
+  </form>
+</section>
+
+<section class="bg-white rounded-lg shadow-sm border border-palestra-borde p-6">
+  {% if sesiones %}
+  <div class="tabla-contenedor">
+    <table class="tabla-palestra">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Disciplina</th>
+          <th>Tema de la Sesión</th>
+          <th>Asistencias</th>
+          <th>Evaluaciones</th>
+          <th>Estado de Edición</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ses in sesiones %}
+        <tr>
+          <td class="font-semibold">{{ ses.fecha|date:"d/m/Y" }}</td>
+          <td>{{ ses.disciplina.nombre }}</td>
+          <td class="text-sm text-palestra-secundario">{{ ses.tema }}</td>
+          <td>{{ ses.asistencias_count }}</td>
+          <td>{{ ses.evaluaciones_count }}</td>
+          <td>
+            {% if ses.esta_dentro_ventana_correccion %}
+            <span class="insignia insignia-exito">Dentro de ventana (7 días)</span>
+            {% else %}
+            <span class="insignia insignia-neutra">Cerrada</span>
+            {% endif %}
+          </td>
+          <td>
+            <a href="{% url 'seguimiento:gestionar_sesion' ses.id %}" class="btn-palestra-secundario py-1 px-3 text-xs">
+              {% if ses.esta_dentro_ventana_correccion %}Registrar / Corregir{% else %}Ver detalle{% endif %}
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="text-sm text-palestra-secundario m-0">No se encontraron sesiones registradas.</p>
+  {% endif %}
+</section>
+{% endblock %}

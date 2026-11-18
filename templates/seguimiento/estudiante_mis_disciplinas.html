@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block titulo %}Mis Disciplinas y Horarios{% endblock %}
+{% block contenido %}
+<div class="mb-6">
+  <h1 class="text-2xl font-bold text-palestra-primario-900 m-0">Mis Disciplinas Deportivas</h1>
+  <p class="text-sm text-palestra-secundario mt-1 mb-0">
+    Consulta de disciplinas asignadas, horarios de entrenamiento, recintos y cuerpo técnico.
+  </p>
+</div>
+
+{% if inscripciones %}
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  {% for insc in inscripciones %}
+  <div class="bg-white rounded-lg shadow-sm border border-palestra-borde p-6">
+    <div class="flex items-center justify-between mb-2">
+      <h2 class="text-lg font-bold text-palestra-primario-900 m-0">{{ insc.disciplina.nombre }}</h2>
+      {% if insc.estado == 'activa' %}
+      <span class="insignia insignia-exito">Inscripción Activa</span>
+      {% else %}
+      <span class="insignia insignia-neutra">Baja ({{ insc.fecha_baja|date:"d/m/Y" }})</span>
+      {% endif %}
+    </div>
+    <p class="text-sm text-palestra-secundario mb-4">{{ insc.disciplina.descripcion }}</p>
+    <div class="text-sm flex flex-col gap-1 border-t border-palestra-borde pt-3">
+      <span><strong>Horario:</strong> {{ insc.disciplina.horario_formateado }}</span>
+      <span><strong>Lugar:</strong> {{ insc.disciplina.lugar }}</span>
+      <span>
+        <strong>Entrenador(es):</strong>
+        {% for ent in insc.disciplina.entrenadores.all %}
+          {{ ent.nombre_completo }} ({{ ent.especialidad }}){% if not forloop.last %}, {% endif %}
+        {% empty %}
+          Por asignar
+        {% endfor %}
+      </span>
+      <span><strong>Fecha de inscripción:</strong> {{ insc.fecha_inscripcion|date:"d/m/Y" }}</span>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="bg-white rounded-lg border border-palestra-borde p-6">
+  <p class="text-sm text-palestra-secundario m-0">No registra disciplinas asignadas.</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block titulo %}Nueva Sesión de Entrenamiento{% endblock %}
+{% block contenido %}
+<div class="max-w-lg mx-auto bg-white rounded-lg shadow-sm border border-palestra-borde p-6 md:p-8">
+  <h1 class="text-2xl font-bold text-palestra-primario-900 mt-0 mb-2">
+    Iniciar sesión de entrenamiento
+  </h1>
+  <p class="text-sm text-palestra-secundario mb-6">
+    Seleccione la disciplina deportiva y la fecha de la sesión para registrar la asistencia y evaluaciones en lote. No se permiten fechas futuras ni sesiones duplicadas en el mismo día.
+  </p>
+
+  <form method="post" novalidate class="flex flex-col gap-4">
+    {% csrf_token %}
+    <div>
+      <label for="id_disciplina" class="block text-sm font-semibold text-palestra-primario-900 mb-1">
+        Disciplina deportiva asignada
+      </label>
+      <select id="id_disciplina" name="disciplina" class="form-select" required>
+        <option value="">Seleccione una disciplina...</option>
+        {% for d in disciplinas %}
+        <option value="{{ d.id }}" {% if disciplina_preseleccionada == d.id|stringformat:"s" %}selected{% endif %}>
+          {{ d.nombre }} ({{ d.horario_formateado }})
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div>
+      <label for="id_fecha" class="block text-sm font-semibold text-palestra-primario-900 mb-1">
+        Fecha de la sesión (máximo hoy)
+      </label>
+      <input type="date" id="id_fecha" name="fecha" value="{{ fecha_hoy }}" max="{{ fecha_hoy }}" class="form-control" required>
+    </div>
+
+    <div>
+      <label for="id_tema" class="block text-sm font-semibold text-palestra-primario-900 mb-1">
+        Tema o enfoque de la sesión (opcional)
+      </label>
+      <input type="text" id="id_tema" name="tema" class="form-control" placeholder="Ej.: Control de velocidad y táctica colectiva">
+    </div>
+
+    <div class="flex items-center justify-end gap-3 pt-4 border-t border-palestra-borde mt-2">
+      <a href="{% url 'seguimiento:lista_sesiones' %}" class="btn-palestra-secundario">Cancelar</a>
+      <button type="submit" class="btn-palestra-primario">Continuar a toma de asistencia</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block titulo %}Nómina de {{ disciplina.nombre }}{% endblock %}
+{% block contenido %}
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+  <div>
+    <h1 class="text-2xl font-bold text-palestra-primario-900 m-0">
+      Nómina de Estudiantes: {{ disciplina.nombre }}
+    </h1>
+    <p class="text-sm text-palestra-secundario mt-1 mb-0">
+      {{ disciplina.horario_formateado }} · {{ disciplina.lugar }} ({{ nomina|length }} inscritos activos)
+    </p>
+  </div>
+  <div class="flex gap-2">
+    <a href="{% url 'seguimiento:crear_sesion' %}?disciplina={{ disciplina.id }}" class="btn-palestra-acento">
+      Tomar asistencia en esta disciplina
+    </a>
+    <a href="{% url 'seguimiento:entrenador_mis_disciplinas' %}" class="btn-palestra-secundario">
+      Volver
+    </a>
+  </div>
+</div>
+
+<section class="bg-white rounded-lg shadow-sm border border-palestra-borde p-6">
+  {% if nomina %}
+  <div class="tabla-contenedor">
+    <table class="tabla-palestra">
+      <thead>
+        <tr>
+          <th>Estudiante</th>
+          <th>RUT</th>
+          <th>Curso o Carrera</th>
+          <th>Correo Institucional</th>
+          <th>Sesiones Registradas</th>
+          <th>Asistencia</th>
+          <th>Promedio Rendimiento</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in nomina %}
+        <tr>
+          <td class="font-semibold text-palestra-primario-900">{{ item.estudiante.nombre_completo }}</td>
+          <td class="text-sm">{{ item.estudiante.rut_formateado }}</td>
+          <td class="text-sm">{{ item.estudiante.curso_o_carrera }}</td>
+          <td class="text-sm">{{ item.estudiante.usuario.email }}</td>
+          <td class="text-sm">{{ item.total_sesiones }}</td>
+          <td>
+            <span class="insignia {% if item.porcentaje_asistencia >= 75 %}insignia-exito{% else %}insignia-alerta{% endif %}">
+              {{ item.porcentaje_asistencia|floatformat:1 }} %
+            </span>
+          </td>
+          <td>
+            {% if item.promedio_nota %}
+            <span class="insignia {% if item.promedio_nota >= 4.0 %}insignia-exito{% else %}insignia-peligro{% endif %}">
+              {{ item.promedio_nota|floatformat:1 }}
+            </span>
+            {% else %}
+            <span class="text-xs text-palestra-secundario">Sin evaluaciones</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="text-sm text-palestra-secundario m-0">
+    No hay estudiantes con inscripción activa en esta disciplina.
+  </p>
+  {% endif %}
+</section>
+{% endblock %}
