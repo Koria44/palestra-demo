@@ -44,6 +44,12 @@ respaldos/
 *.enc
 *.bak
 
+# Documentacion local, informes Word y scripts de generacion de informe (no subir a GitHub)
+docs/
+herramientas/
+Informe_PALESTRA.docx
+~$*.docx
+
 # Linter y editores
 .ruff_cache/
 .vscode/

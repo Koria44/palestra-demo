@@ -1,1 +1,0 @@
-No known vulnerabilities found (0 vulnerabilidades detectadas en los paquetes fijados en requirements.txt).

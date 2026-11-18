@@ -1,0 +1,26 @@
+# Blueprint de despliegue en Render para PALESTRA
+services:
+  - type: web
+    name: palestra-gestion-deportiva
+    runtime: python
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --no-input && python manage.py migrate --no-input"
+    startCommand: "gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2"
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: DJANGO_SETTINGS_MODULE
+        value: "config.produccion"
+      - key: DEBUG
+        value: "False"
+      - key: USAR_SQLITE_LOCAL
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_URL_DIRECT
+        sync: false
+      - key: CLAVE_CIFRADO_CAMPOS
+        sync: false
+      - key: CLAVE_INDICE_CIEGO
+        sync: false
