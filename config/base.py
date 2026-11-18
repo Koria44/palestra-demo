@@ -17,16 +17,23 @@ SECRET_KEY_FALLBACKS = [c.strip() for c in claves_anteriores.split(",") if c.str
 
 DEBUG = os.environ.get("DEBUG", "False").lower() in ("true", "1", "yes")
 
-hosts_permitidos = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1")
+hosts_permitidos = os.environ.get(
+    "ALLOWED_HOSTS", "localhost,127.0.0.1,.onrender.com"
+)
 ALLOWED_HOSTS = [h.strip() for h in hosts_permitidos.split(",") if h.strip()]
+if ".onrender.com" not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(".onrender.com")
 host_render = os.environ.get("RENDER_EXTERNAL_HOSTNAME", "").strip()
 if host_render and host_render not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(host_render)
 
 origenes_csrf = os.environ.get(
-    "CSRF_TRUSTED_ORIGINS", "http://localhost:8000,http://127.0.0.1:8000"
+    "CSRF_TRUSTED_ORIGINS",
+    "http://localhost:8000,http://127.0.0.1:8000,https://*.onrender.com",
 )
 CSRF_TRUSTED_ORIGINS = [o.strip() for o in origenes_csrf.split(",") if o.strip()]
+if "https://*.onrender.com" not in CSRF_TRUSTED_ORIGINS:
+    CSRF_TRUSTED_ORIGINS.append("https://*.onrender.com")
 if host_render:
     origen_render = f"https://{host_render}"
     if origen_render not in CSRF_TRUSTED_ORIGINS:
