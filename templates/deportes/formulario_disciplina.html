@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block titulo %}{% if modo_edicion %}Editar Disciplina{% else %}Nueva Disciplina{% endif %}{% endblock %}
+{% block contenido %}
+<div class="max-w-2xl mx-auto bg-white rounded-lg shadow-sm border border-palestra-borde p-6 md:p-8">
+  <h1 class="text-2xl font-bold text-palestra-primario-900 mt-0 mb-2">
+    {% if modo_edicion %}Editar disciplina: {{ disciplina.nombre }}{% else %}Registrar nueva disciplina deportiva{% endif %}
+  </h1>
+  <p class="text-sm text-palestra-secundario mb-6">
+    Defina el cupo máximo (mayor a 0) y un bloque horario coherente (hora de término posterior a la hora de inicio).
+  </p>
+
+  {% if formulario.non_field_errors %}
+  <div class="alert alert-danger" role="alert">
+    <span>{{ formulario.non_field_errors.0 }}</span>
+  </div>
+  {% endif %}
+
+  <form method="post" novalidate class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {% csrf_token %}
+    <div style="grid-column: span 2 / span 2;">
+      <label for="{{ formulario.nombre.id_for_label }}" class="block text-sm font-semibold text-palestra-primario-900 mb-1">
+        {{ formulario.nombre.label }}
+      </label>
+      {{ formulario.nombre }}
+      {% if formulario.nombre.errors %}
+      <p class="text-xs text-palestra-peligro-500 mt-1 mb-0">{{ formulario.nombre.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <div style="grid-column: span 2 / span 2;">
+      <label for="{{ formulario.descripcion.id_for_label }}" class="block text-sm font-semibold text-palestra-primario-900 mb-1">
+        {{ formulario.descripcion.label }}
+      </label>
+      {{ formulario.descripcion }}
+      {% if formulario.descripcion.errors %}
+      <p class="text-xs text-palestra-peligro-500 mt-1 mb-0">{{ formulario.descripcion.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <div>
+      <label for="{{ formulario.cupo_maximo.id_for_label }}" class="block text-sm font-semibold text-palestra-primario-900 mb-1">
+        {{ formulario.cupo_maximo.label }}
+      </label>
+      {{ formulario.cupo_maximo }}
+      {% if formulario.cupo_maximo.errors %}
+      <p class="text-xs text-palestra-peligro-500 mt-1 mb-0">{{ formulario.cupo_maximo.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <div>
+      <label for="{{ formulario.dia.id_for_label }}" class="block text-sm font-semibold text-palestra-primario-900 mb-1">
+        {{ formulario.dia.label }}
+      </label>
+      {{ formulario.dia }}
+      {% if formulario.dia.errors %}
+      <p class="text-xs text-palestra-peligro-500 mt-1 mb-0">{{ formulario.dia.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <div>
+      <label for="{{ formulario.hora_inicio.id_for_label }}" class="block text-sm font-semibold text-palestra-primario-900 mb-1">
+        {{ formulario.hora_inicio.label }}
+      </label>
+      {{ formulario.hora_inicio }}
+      {% if formulario.hora_inicio.errors %}
+      <p class="text-xs text-palestra-peligro-500 mt-1 mb-0">{{ formulario.hora_inicio.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <div>
+      <label for="{{ formulario.hora_termino.id_for_label }}" class="block text-sm font-semibold text-palestra-primario-900 mb-1">
+        {{ formulario.hora_termino.label }}
+      </label>
+      {{ formulario.hora_termino }}
+      {% if formulario.hora_termino.errors %}
+      <p class="text-xs text-palestra-peligro-500 mt-1 mb-0">{{ formulario.hora_termino.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <div style="grid-column: span 2 / span 2;">
+      <label for="{{ formulario.lugar.id_for_label }}" class="block text-sm font-semibold text-palestra-primario-900 mb-1">
+        {{ formulario.lugar.label }}
+      </label>
+      {{ formulario.lugar }}
+      {% if formulario.lugar.errors %}
+      <p class="text-xs text-palestra-peligro-500 mt-1 mb-0">{{ formulario.lugar.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <div style="grid-column: span 2 / span 2;" class="flex items-center gap-2 pt-2">
+      {{ formulario.activo }}
+      <label for="{{ formulario.activo.id_for_label }}" class="text-sm font-medium text-palestra-texto">
+        Disciplina activa para nuevas inscripciones
+      </label>
+    </div>
+
+    <div style="grid-column: span 2 / span 2;" class="flex items-center justify-end gap-3 pt-4 border-t border-palestra-borde">
+      <a href="{% url 'deportes:lista_disciplinas' %}" class="btn-palestra-secundario">Cancelar</a>
+      <button type="submit" class="btn-palestra-primario">
+        {% if modo_edicion %}Guardar cambios{% else %}Crear disciplina{% endif %}
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

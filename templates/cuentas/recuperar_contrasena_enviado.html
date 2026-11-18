@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block titulo %}Solicitud procesada{% endblock %}
+{% block contenido_publico %}
+<div class="max-w-md w-full mx-auto bg-white rounded-lg shadow border border-palestra-borde p-6 md:p-8 text-center">
+  <h1 class="text-xl font-bold text-palestra-primario-900 mt-0 mb-2">
+    Instrucciones enviadas
+  </h1>
+  <p class="text-sm text-palestra-secundario mb-6">
+    Si el correo electrónico ingresado corresponde a una cuenta activa registrada en PALESTRA, recibirá en breves momentos un mensaje con un enlace de un solo uso para restablecer su contraseña.
+  </p>
+  <a href="{% url 'cuentas:iniciar_sesion' %}" class="btn-palestra-primario w-full">
+    Volver al inicio de sesión
+  </a>
+</div>
+{% endblock %}

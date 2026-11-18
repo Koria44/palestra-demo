@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block titulo %}Cambiar contraseña{% endblock %}
+{% block contenido %}
+<div class="max-w-lg mx-auto bg-white rounded-lg shadow-sm border border-palestra-borde p-6 md:p-8">
+  <h1 class="text-xl font-bold text-palestra-primario-900 mt-0 mb-2">
+    Actualización de contraseña
+  </h1>
+  <p class="text-sm text-palestra-secundario mb-6">
+    Su contraseña se almacena protegida mediante hash irreversible <strong>Argon2id</strong> con sal única. Al cambiarla, se cerrarán automáticamente las sesiones abiertas en otros dispositivos.
+  </p>
+
+  {% if user.debe_cambiar_contrasena %}
+  <div class="alert alert-warning" role="alert">
+    <span>Su cuenta tiene marcado el cambio obligatorio de contraseña inicial. Defina una nueva contraseña personal para continuar.</span>
+  </div>
+  {% endif %}
+
+  <form method="post" novalidate class="flex flex-col gap-4">
+    {% csrf_token %}
+    {% for campo in formulario %}
+    <div>
+      <label for="{{ campo.id_for_label }}" class="block text-sm font-semibold text-palestra-primario-900 mb-1">
+        {{ campo.label }}
+      </label>
+      {{ campo }}
+      {% if campo.errors %}
+      <p class="text-xs text-palestra-peligro-500 mt-1 mb-0">{{ campo.errors.0 }}</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    <div class="text-xs text-palestra-secundario bg-palestra-fondo p-3 rounded border border-palestra-borde">
+      <strong>Requisitos de seguridad:</strong> Mínimo 12 caracteres, incluyendo letras mayúsculas, minúsculas y números. Se permite pegar desde gestores de contraseñas.
+    </div>
+
+    <div class="flex items-center justify-end gap-3 mt-2">
+      {% if not user.debe_cambiar_contrasena %}
+      <a href="{% url 'cuentas:panel_inicio' %}" class="btn-palestra-secundario">Cancelar</a>
+      {% endif %}
+      <button type="submit" class="btn-palestra-primario">Guardar nueva contraseña</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

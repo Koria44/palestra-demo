@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block titulo %}Definir nueva contraseña{% endblock %}
+{% block contenido_publico %}
+<div class="max-w-md w-full mx-auto bg-white rounded-lg shadow border border-palestra-borde p-6 md:p-8">
+  <h1 class="text-xl font-bold text-palestra-primario-900 mt-0 mb-2">
+    Restablecer contraseña
+  </h1>
+
+  {% if validlink %}
+  <p class="text-sm text-palestra-secundario mb-4">
+    Ingrese y confirme su nueva contraseña cumpliendo la política de seguridad institucional (mínimo 12 caracteres).
+  </p>
+  <form method="post" novalidate class="flex flex-col gap-4">
+    {% csrf_token %}
+    {% for campo in form %}
+    <div>
+      <label for="{{ campo.id_for_label }}" class="block text-sm font-semibold text-palestra-primario-900 mb-1">
+        {{ campo.label }}
+      </label>
+      {{ campo }}
+      {% if campo.errors %}
+      <p class="text-xs text-palestra-peligro-500 mt-1 mb-0">{{ campo.errors.0 }}</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn-palestra-primario w-full mt-2">
+      Guardar nueva contraseña
+    </button>
+  </form>
+  {% else %}
+  <div class="alert alert-danger" role="alert">
+    <span>El enlace de recuperación no es válido, ya fue utilizado o ha expirado. Por favor, solicite uno nuevo.</span>
+  </div>
+  <a href="{% url 'cuentas:recuperar_contrasena' %}" class="btn-palestra-secundario w-full">
+    Solicitar nuevo enlace
+  </a>
+  {% endif %}
+</div>
+{% endblock %}

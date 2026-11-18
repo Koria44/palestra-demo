@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block titulo %}Mis Disciplinas Asignadas{% endblock %}
+{% block contenido %}
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+  <div>
+    <h1 class="text-2xl font-bold text-palestra-primario-900 m-0">Mis Disciplinas e Inscritos</h1>
+    <p class="text-sm text-palestra-secundario mt-1 mb-0">
+      Disciplinas bajo su responsabilidad técnica y acceso a la nómina de estudiantes inscritos activos.
+    </p>
+  </div>
+  <div>
+    <a href="{% url 'seguimiento:crear_sesion' %}" class="btn-palestra-acento">
+      <span>Nueva sesión / Tomar asistencia</span>
+    </a>
+  </div>
+</div>
+
+{% if disciplinas %}
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  {% for disc in disciplinas %}
+  <div class="bg-white rounded-lg shadow-sm border border-palestra-borde p-6 flex flex-col justify-between">
+    <div>
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="text-lg font-bold text-palestra-primario-900 m-0">{{ disc.nombre }}</h2>
+        <span class="insignia insignia-exito">Asignada</span>
+      </div>
+      <p class="text-sm text-palestra-secundario mb-3">{{ disc.descripcion }}</p>
+      <div class="text-sm text-palestra-texto mb-4 flex flex-col gap-1">
+        <span><strong>Horario:</strong> {{ disc.horario_formateado }}</span>
+        <span><strong>Recinto:</strong> {{ disc.lugar }}</span>
+        <span><strong>Inscritos activos:</strong> {{ disc.inscritos_activos }} / {{ disc.cupo_maximo }}</span>
+        <span><strong>Sesiones registradas:</strong> {{ disc.sesiones_count }}</span>
+      </div>
+    </div>
+    <div class="flex flex-wrap gap-2 pt-4 border-t border-palestra-borde">
+      <a href="{% url 'seguimiento:entrenador_nomina_disciplina' disc.id %}" class="btn-palestra-secundario text-sm">
+        Ver nómina de inscritos
+      </a>
+      <a href="{% url 'seguimiento:crear_sesion' %}?disciplina={{ disc.id }}" class="btn-palestra-primario text-sm">
+        Registrar sesión / asistencia
+      </a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="bg-white rounded-lg border border-palestra-borde p-6">
+  <p class="text-sm text-palestra-secundario m-0">No tiene disciplinas asignadas actualmente.</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block titulo %}Panel de Coordinación Deportiva{% endblock %}
+{% block contenido %}
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+  <div>
+    <h1 class="text-2xl font-bold text-palestra-primario-900 m-0">
+      Panel de Coordinación Deportiva
+    </h1>
+    <p class="text-sm text-palestra-secundario mt-1 mb-0">
+      Resumen general de disciplinas, inscripciones, ocupación de cupos y cumplimiento de asistencia.
+    </p>
+  </div>
+  <div class="flex flex-wrap gap-2">
+    <a href="/deportes/inscripciones/nueva/" class="btn-palestra-primario">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      <span>Inscribir estudiante</span>
+    </a>
+    <a href="/reportes/" class="btn-palestra-secundario">Ver reportes</a>
+  </div>
+</div>
+
+<!-- Tarjetas de indicadores globales -->
+<section aria-label="Indicadores generales" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+  <div class="bg-white rounded-lg shadow-sm border border-palestra-borde p-6">
+    <span class="text-xs font-semibold uppercase tracking-wider text-palestra-secundario">Estudiantes Activos</span>
+    <p class="text-3xl font-bold text-palestra-primario-900 mt-2 mb-1">{{ total_estudiantes }}</p>
+    <a href="/deportes/estudiantes/" class="text-xs font-medium">Gestionar nómina de estudiantes</a>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-sm border border-palestra-borde p-6">
+    <span class="text-xs font-semibold uppercase tracking-wider text-palestra-secundario">Disciplinas Activas</span>
+    <p class="text-3xl font-bold text-palestra-primario-900 mt-2 mb-1">{{ total_disciplinas }}</p>
+    <a href="/deportes/disciplinas/" class="text-xs font-medium">Administrar disciplinas y cupos</a>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-sm border border-palestra-borde p-6">
+    <span class="text-xs font-semibold uppercase tracking-wider text-palestra-secundario">Entrenadores Activos</span>
+    <p class="text-3xl font-bold text-palestra-primario-900 mt-2 mb-1">{{ total_entrenadores }}</p>
+    <a href="/deportes/entrenadores/" class="text-xs font-medium">Gestionar cuerpo técnico</a>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-sm border border-palestra-borde p-6">
+    <span class="text-xs font-semibold uppercase tracking-wider text-palestra-secundario">Asistencia Promedio Global</span>
+    <p class="text-3xl font-bold text-palestra-acento-500 mt-2 mb-1">{{ asistencia_promedio_global|floatformat:1 }} %</p>
+    <span class="text-xs text-palestra-secundario">{{ total_inscripciones }} inscripciones vigentes</span>
+  </div>
+</section>
+
+<!-- Ocupacion de cupos por disciplina y accesos rapidos -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <section class="lg:col-span-2 bg-white rounded-lg shadow-sm border border-palestra-borde p-6" style="grid-column: span 2 / span 2;">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-bold text-palestra-primario-900 m-0">Ocupación de Cupos por Disciplina</h2>
+      <a href="/deportes/disciplinas/" class="text-sm font-medium">Ver todas</a>
+    </div>
+
+    {% if disciplinas_ocupacion %}
+    <div class="tabla-contenedor">
+      <table class="tabla-palestra">
+        <thead>
+          <tr>
+            <th>Disciplina</th>
+            <th>Horario y Lugar</th>
+            <th>Inscritos / Cupo</th>
+            <th>Ocupación</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for disc in disciplinas_ocupacion %}
+          <tr>
+            <td class="font-semibold text-palestra-primario-900">{{ disc.nombre }}</td>
+            <td class="text-sm text-palestra-secundario">{{ disc.horario_formateado }} · {{ disc.lugar }}</td>
+            <td class="text-sm font-medium">{{ disc.inscritos_activos }} / {{ disc.cupo_maximo }}</td>
+            <td style="min-width: 140px;">
+              <div class="flex items-center gap-2">
+                <div class="barra-progreso-fondo flex-1">
+                  <div class="barra-progreso-relleno" data-porcentaje="{{ disc.porcentaje_ocupacion }}"></div>
+                </div>
+                <span class="text-xs font-semibold">{{ disc.porcentaje_ocupacion }} %</span>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="text-sm text-palestra-secundario m-0">
+      No hay disciplinas activas registradas actualmente. Puede crear la primera desde la sección Disciplinas.
+    </p>
+    {% endif %}
+  </section>
+
+  <section class="bg-white rounded-lg shadow-sm border border-palestra-borde p-6">
+    <h2 class="text-lg font-bold text-palestra-primario-900 mt-0 mb-4">Tareas de Gestión</h2>
+    <div class="flex flex-col gap-3">
+      <a href="/deportes/disciplinas/nueva/" class="btn-palestra-secundario justify-between">
+        <span>Nueva disciplina deportiva</span>
+        <span>+</span>
+      </a>
+      <a href="/deportes/entrenadores/nuevo/" class="btn-palestra-secundario justify-between">
+        <span>Registrar entrenador</span>
+        <span>+</span>
+      </a>
+      <a href="/deportes/estudiantes/nuevo/" class="btn-palestra-secundario justify-between">
+        <span>Registrar estudiante</span>
+        <span>+</span>
+      </a>
+      <a href="/deportes/inscripciones/nueva/" class="btn-palestra-secundario justify-between">
+        <span>Inscribir en disciplina</span>
+        <span>+</span>
+      </a>
+      <a href="{% url 'auditoria:lista_auditoria' %}" class="btn-palestra-secundario justify-between">
+        <span>Consultar bitácora de auditoría</span>
+        <span>→</span>
+      </a>
+    </div>
+  </section>
+</div>
+{% endblock %}

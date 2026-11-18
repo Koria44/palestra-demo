@@ -1,0 +1,26 @@
+<h1 class="text-2xl font-bold text-palestra-primario-900 mt-0 mb-4">
+  Aviso de Privacidad y Protección de Datos Personales
+</h1>
+<p class="text-sm text-palestra-secundario mb-4">
+  El sistema <strong>PALESTRA — Gestión de Actividades Deportivas Estudiantiles</strong> recopila y procesa únicamente los datos personales estrictamente necesarios para el seguimiento académico-deportivo institucional, considerando especialmente la protección de estudiantes que pueden ser menores de edad, en conformidad con la Ley N.º 19.628 sobre Protección de la Vida Privada y los controles de la norma ISO/IEC 27002.
+</p>
+
+<h2 class="text-lg font-bold text-palestra-primario-900 mt-6 mb-2">1. Minimización de datos</h2>
+<p class="text-sm text-palestra-texto mb-4">
+  Solo se registran: nombres, apellidos, RUT chileno, correo electrónico institucional, curso o carrera (en el caso de estudiantes), especialidad (en el caso de entrenadores), teléfono de contacto opcional, e historial de inscripciones, asistencia y evaluaciones deportivas. No se solicitan datos médicos, financieros ni de geolocalización.
+</p>
+
+<h2 class="text-lg font-bold text-palestra-primario-900 mt-6 mb-2">2. Seguridad criptográfica (Hash y Cifrado en reposo)</h2>
+<ul class="text-sm text-palestra-texto mb-4">
+  <li class="mb-2">
+    <strong>Contraseñas:</strong> Nunca se almacenan en texto plano ni mediante cifrado reversible. Se transforman mediante el algoritmo de hash <strong>Argon2id</strong> con sal aleatoria única por usuario.
+  </li>
+  <li class="mb-2">
+    <strong>Datos personales sensibles (RUT y teléfono):</strong> Se almacenan cifrados a nivel de campo en la base de datos mediante <strong>AES autenticado (Fernet / MultiFernet)</strong> y un índice ciego <strong>HMAC-SHA256</strong> con claves separadas.
+  </li>
+</ul>
+
+<h2 class="text-lg font-bold text-palestra-primario-900 mt-6 mb-2">3. Control de acceso y trazabilidad</h2>
+<p class="text-sm text-palestra-texto mb-0">
+  Cada perfil accede exclusivamente a la información pertinente a su función: ningún estudiante puede visualizar datos de otros estudiantes, y cada entrenador solo visualiza la nómina de sus disciplinas asignadas. Todas las operaciones relevantes quedan registradas en una bitácora de auditoría inmutable.
+</p>

@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block titulo %}Panel de Entrenador{% endblock %}
+{% block contenido %}
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+  <div>
+    <h1 class="text-2xl font-bold text-palestra-primario-900 m-0">
+      Panel de Entrenador Deportivo
+    </h1>
+    <p class="text-sm text-palestra-secundario mt-1 mb-0">
+      Gestión de sesiones, control de asistencia por fecha y registro de evaluaciones de sus disciplinas asignadas.
+    </p>
+  </div>
+  <div>
+    <a href="/seguimiento/sesiones/nueva/" class="btn-palestra-acento">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <polyline points="9 11 12 14 22 4"></polyline>
+        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+      </svg>
+      <span>Tomar asistencia</span>
+    </a>
+  </div>
+</div>
+
+<!-- Resumen de disciplinas asignadas -->
+<section aria-label="Mis disciplinas asignadas" class="mb-8">
+  <h2 class="text-lg font-bold text-palestra-primario-900 mt-0 mb-4">Mis Disciplinas Asignadas</h2>
+  {% if disciplinas_asignadas %}
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {% for disc in disciplinas_asignadas %}
+    <div class="bg-white rounded-lg shadow-sm border border-palestra-borde p-6 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-base font-bold text-palestra-primario-900 m-0">{{ disc.nombre }}</h3>
+          <span class="insignia insignia-exito">Activa</span>
+        </div>
+        <p class="text-sm text-palestra-secundario mb-2">{{ disc.horario_formateado }} · {{ disc.lugar }}</p>
+        <p class="text-sm font-medium text-palestra-texto mb-4">
+          Estudiantes inscritos activos: <strong>{{ disc.inscritos_activos }}</strong> / {{ disc.cupo_maximo }}
+        </p>
+      </div>
+      <div class="flex flex-wrap gap-2 pt-3 border-t border-palestra-borde">
+        <a href="/seguimiento/sesiones/nueva/?disciplina={{ disc.id }}" class="btn-palestra-primario text-xs py-2 px-3">
+          Registrar sesión / asistencia
+        </a>
+        <a href="/seguimiento/mis-disciplinas/{{ disc.id }}/" class="btn-palestra-secundario text-xs py-2 px-3">
+          Ver nómina
+        </a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="bg-white rounded-lg border border-palestra-borde p-6">
+    <p class="text-sm text-palestra-secundario m-0">
+      Actualmente no tiene disciplinas deportivas asignadas. Contacte a la Coordinación Deportiva.
+    </p>
+  </div>
+  {% endif %}
+</section>
+
+<!-- Ultimas sesiones registradas -->
+<section class="bg-white rounded-lg shadow-sm border border-palestra-borde p-6">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-lg font-bold text-palestra-primario-900 m-0">Últimas Sesiones Registradas</h2>
+    <a href="/seguimiento/sesiones/" class="text-sm font-medium">Ver historial completo</a>
+  </div>
+
+  {% if ultimas_sesiones %}
+  <div class="tabla-contenedor">
+    <table class="tabla-palestra">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Disciplina</th>
+          <th>Tema de la sesión</th>
+          <th>Registros de asistencia</th>
+          <th>Ventana de corrección</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for sesion in ultimas_sesiones %}
+        <tr>
+          <td class="font-medium">{{ sesion.fecha|date:"d/m/Y" }}</td>
+          <td>{{ sesion.disciplina.nombre }}</td>
+          <td class="text-sm text-palestra-secundario">{{ sesion.tema|default:"Sesión regular" }}</td>
+          <td>{{ sesion.total_asistencias }} estudiantes</td>
+          <td>
+            {% if sesion.esta_dentro_ventana_correccion %}
+            <span class="insignia insignia-exito">Editable (7 días)</span>
+            {% else %}
+            <span class="insignia insignia-neutra">Cerrada</span>
+            {% endif %}
+          </td>
+          <td>
+            <a href="/seguimiento/sesiones/{{ sesion.id }}/" class="text-sm font-semibold">
+              {% if sesion.esta_dentro_ventana_correccion %}Ver / Corregir{% else %}Consultar{% endif %}
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="text-sm text-palestra-secundario m-0">
+    Aún no se han registrado sesiones de entrenamiento en sus disciplinas.
+  </p>
+  {% endif %}
+</section>
+{% endblock %}

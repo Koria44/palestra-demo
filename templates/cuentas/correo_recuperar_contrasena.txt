@@ -1,0 +1,11 @@
+Estimado(a) usuario(a) de PALESTRA,
+
+Ha solicitado restablecer la contraseña de su cuenta en el Sistema de Gestión de Actividades Deportivas Estudiantiles.
+
+Para definir una nueva contraseña, abra el siguiente enlace de un solo uso (válido por 1 hora):
+{{ protocol }}://{{ domain }}{% url 'cuentas:recuperar_contrasena_confirmar' uidb64=uid token=token %}
+
+Si usted no realizó esta solicitud, puede ignorar este mensaje de forma segura.
+
+Atentamente,
+Coordinación Deportiva - PALESTRA
