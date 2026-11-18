@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block titulo %}Inscripciones en Disciplinas{% endblock %}
+{% block contenido %}
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+  <div>
+    <h1 class="text-2xl font-bold text-palestra-primario-900 m-0">Inscripciones Deportivas</h1>
+    <p class="text-sm text-palestra-secundario mt-1 mb-0">
+      Control de inscripciones activas e historial de bajas lógicas por estudiante y disciplina.
+    </p>
+  </div>
+  <div>
+    <a href="{% url 'deportes:crear_inscripcion' %}" class="btn-palestra-primario">
+      <span>Nueva inscripción</span>
+    </a>
+  </div>
+</div>
+
+<!-- Filtros -->
+<section class="bg-white rounded-lg shadow-sm border border-palestra-borde p-4 mb-6">
+  <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+    <div>
+      <label for="id_q" class="block text-xs font-semibold uppercase text-palestra-secundario mb-1">Estudiante o RUT</label>
+      <input type="text" id="id_q" name="q" value="{{ busqueda }}" class="form-control" placeholder="Nombre o RUT">
+    </div>
+    <div>
+      <label for="id_disciplina" class="block text-xs font-semibold uppercase text-palestra-secundario mb-1">Disciplina</label>
+      <select id="id_disciplina" name="disciplina" class="form-select">
+        <option value="">Todas las disciplinas</option>
+        {% for d in disciplinas_filtro %}
+        <option value="{{ d.id }}" {% if disciplina_seleccionada == d.id|stringformat:"s" %}selected{% endif %}>{{ d.nombre }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label for="id_estado" class="block text-xs font-semibold uppercase text-palestra-secundario mb-1">Estado</label>
+      <select id="id_estado" name="estado" class="form-select">
+        <option value="">Todas</option>
+        <option value="activa" {% if estado_filtro == 'activa' %}selected{% endif %}>Activas</option>
+        <option value="baja" {% if estado_filtro == 'baja' %}selected{% endif %}>Dadas de baja</option>
+      </select>
+    </div>
+    <div class="flex gap-2">
+      <button type="submit" class="btn-palestra-primario flex-1">Filtrar</button>
+      <a href="{% url 'deportes:lista_inscripciones' %}" class="btn-palestra-secundario">Limpiar</a>
+    </div>
+  </form>
+</section>
+
+<section class="bg-white rounded-lg shadow-sm border border-palestra-borde p-6">
+  {% if pagina_obj.object_list %}
+  <div class="tabla-contenedor">
+    <table class="tabla-palestra">
+      <thead>
+        <tr>
+          <th>Estudiante</th>
+          <th>RUT</th>
+          <th>Disciplina</th>
+          <th>Fecha de Inscripción</th>
+          <th>Estado</th>
+          <th>Fecha de Baja</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for insc in pagina_obj %}
+        <tr>
+          <td class="font-semibold text-palestra-primario-900">{{ insc.estudiante.nombre_completo }}</td>
+          <td class="text-sm">{{ insc.estudiante.rut_formateado }}</td>
+          <td class="text-sm">{{ insc.disciplina.nombre }}</td>
+          <td class="text-sm">{{ insc.fecha_inscripcion|date:"d/m/Y" }}</td>
+          <td>
+            {% if insc.estado == 'activa' %}
+            <span class="insignia insignia-exito">Activa</span>
+            {% else %}
+            <span class="insignia insignia-neutra">Baja lógica</span>
+            {% endif %}
+          </td>
+          <td class="text-sm text-palestra-secundario">
+            {% if insc.fecha_baja %}{{ insc.fecha_baja|date:"d/m/Y" }}{% else %}—{% endif %}
+          </td>
+          <td>
+            {% if insc.estado == 'activa' %}
+            <button
+              type="button"
+              class="btn-palestra-peligro py-1 px-3 text-xs"
+              data-url-accion="{% url 'deportes:dar_baja_inscripcion' insc.id %}"
+              data-confirmar-accion="¿Confirma dar de baja la inscripción de «{{ insc.estudiante.nombre_completo }}» en «{{ insc.disciplina.nombre }}»? El historial de asistencia y notas se conservará."
+            >
+              Dar de baja
+            </button>
+            {% else %}
+            <span class="text-xs text-palestra-secundario">Historial conservado</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="text-sm text-palestra-secundario m-0">No se encontraron inscripciones con los criterios seleccionados.</p>
+  {% endif %}
+</section>
+{% endblock %}

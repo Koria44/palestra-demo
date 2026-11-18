@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block titulo %}Estudiantes Registrados{% endblock %}
+{% block contenido %}
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+  <div>
+    <h1 class="text-2xl font-bold text-palestra-primario-900 m-0">Estudiantes</h1>
+    <p class="text-sm text-palestra-secundario mt-1 mb-0">
+      Nómina de estudiantes con protección de datos personales (RUT y teléfono cifrados en reposo).
+    </p>
+  </div>
+  <div class="flex gap-2">
+    <a href="{% url 'deportes:crear_estudiante' %}" class="btn-palestra-primario">
+      <span>Nuevo estudiante</span>
+    </a>
+    <a href="{% url 'deportes:crear_inscripcion' %}" class="btn-palestra-acento">
+      <span>Inscribir en disciplina</span>
+    </a>
+  </div>
+</div>
+
+{% if credencial_unica_vez %}
+<div class="alert alert-warning mb-6" role="alert">
+  <div>
+    <strong class="block mb-1">Información de acceso de un solo uso para {{ credencial_unica_vez.nombre }} ({{ credencial_unica_vez.correo }}):</strong>
+    {% if credencial_unica_vez.tipo == 'temporal' %}
+    <p class="text-sm m-0">
+      Contraseña temporal generada (se muestra <strong>una única vez</strong>; el usuario deberá cambiarla obligatoriamente en su primer inicio de sesión):
+      <code class="px-2 py-1 bg-white rounded border border-palestra-borde font-bold">{{ credencial_unica_vez.valor }}</code>
+    </p>
+    {% else %}
+    <p class="text-sm m-0">
+      Enlace firmado de un solo uso enviado por correo para activación de cuenta:
+      <a href="{{ credencial_unica_vez.valor }}" class="font-bold underline">{{ credencial_unica_vez.valor }}</a>
+    </p>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+<!-- Filtros -->
+<section class="bg-white rounded-lg shadow-sm border border-palestra-borde p-4 mb-6">
+  <form method="get" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+    <div>
+      <label for="id_q" class="block text-xs font-semibold uppercase text-palestra-secundario mb-1">Buscar por nombre, RUT, carrera o correo</label>
+      <input type="text" id="id_q" name="q" value="{{ busqueda }}" class="form-control" placeholder="Ej.: Catalina, 18.123.456-3, Informática">
+    </div>
+    <div>
+      <label for="id_estado" class="block text-xs font-semibold uppercase text-palestra-secundario mb-1">Estado</label>
+      <select id="id_estado" name="estado" class="form-select">
+        <option value="">Todos</option>
+        <option value="activo" {% if estado_filtro == 'activo' %}selected{% endif %}>Activos</option>
+        <option value="inactivo" {% if estado_filtro == 'inactivo' %}selected{% endif %}>Inactivos</option>
+      </select>
+    </div>
+    <div class="flex gap-2">
+      <button type="submit" class="btn-palestra-primario flex-1">Filtrar</button>
+      <a href="{% url 'deportes:lista_estudiantes' %}" class="btn-palestra-secundario">Limpiar</a>
+    </div>
+  </form>
+</section>
+
+<section class="bg-white rounded-lg shadow-sm border border-palestra-borde p-6">
+  {% if pagina_obj.object_list %}
+  <div class="tabla-contenedor">
+    <table class="tabla-palestra">
+      <thead>
+        <tr>
+          <th>Estudiante</th>
+          <th>RUT (descifrado)</th>
+          <th>Curso o Carrera</th>
+          <th>Correo Institucional</th>
+          <th>Disciplinas Activas</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for est in pagina_obj %}
+        <tr>
+          <td class="font-semibold text-palestra-primario-900">{{ est.nombre_completo }}</td>
+          <td class="text-sm">{{ est.rut_formateado }}</td>
+          <td class="text-sm">{{ est.curso_o_carrera }}</td>
+          <td class="text-sm">{{ est.usuario.email }}</td>
+          <td class="text-sm">{{ est.disciplinas_activas_count }}</td>
+          <td>
+            {% if est.activo %}
+            <span class="insignia insignia-exito">Activo</span>
+            {% else %}
+            <span class="insignia insignia-peligro">Inactivo</span>
+            {% endif %}
+          </td>
+          <td>
+            <div class="flex items-center gap-2">
+              <a href="{% url 'deportes:editar_estudiante' est.id %}" class="btn-palestra-secundario py-1 px-3 text-xs">Editar</a>
+              <button
+                type="button"
+                class="btn-palestra-secundario py-1 px-3 text-xs"
+                data-url-accion="{% url 'deportes:cambiar_estado_estudiante' est.id %}"
+                data-confirmar-accion="¿Confirma cambiar el estado del estudiante «{{ est.nombre_completo }}»? El historial deportivo se conservará."
+              >
+                {% if est.activo %}Desactivar{% else %}Reactivar{% endif %}
+              </button>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="text-sm text-palestra-secundario m-0">No se encontraron estudiantes con los criterios seleccionados.</p>
+  {% endif %}
+</section>
+{% endblock %}

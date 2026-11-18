@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block titulo %}Entrenadores Deportivos{% endblock %}
+{% block contenido %}
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+  <div>
+    <h1 class="text-2xl font-bold text-palestra-primario-900 m-0">Entrenadores Deportivos</h1>
+    <p class="text-sm text-palestra-secundario mt-1 mb-0">
+      Gestión del cuerpo técnico, asignación a disciplinas y habilitación segura de cuentas.
+    </p>
+  </div>
+  <div>
+    <a href="{% url 'deportes:crear_entrenador' %}" class="btn-palestra-primario">
+      <span>Nuevo entrenador</span>
+    </a>
+  </div>
+</div>
+
+{% if credencial_unica_vez %}
+<div class="alert alert-warning mb-6" role="alert">
+  <div>
+    <strong class="block mb-1">Información de acceso de un solo uso para {{ credencial_unica_vez.nombre }} ({{ credencial_unica_vez.correo }}):</strong>
+    {% if credencial_unica_vez.tipo == 'temporal' %}
+    <p class="text-sm m-0">
+      Contraseña temporal generada (se muestra <strong>una única vez</strong>; entréguela de forma segura al usuario, quien deberá cambiarla obligatoriamente en su primer ingreso):
+      <code class="px-2 py-1 bg-white rounded border border-palestra-borde font-bold">{{ credencial_unica_vez.valor }}</code>
+    </p>
+    {% else %}
+    <p class="text-sm m-0">
+      Se ha generado y enviado por correo el enlace firmado de un solo uso para que el usuario cree su propia contraseña:
+      <a href="{{ credencial_unica_vez.valor }}" class="font-bold underline">{{ credencial_unica_vez.valor }}</a>
+    </p>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+<!-- Busqueda -->
+<section class="bg-white rounded-lg shadow-sm border border-palestra-borde p-4 mb-6">
+  <form method="get" class="flex flex-col md:flex-row gap-4 items-end">
+    <div class="flex-1 w-full">
+      <label for="id_q" class="block text-xs font-semibold uppercase text-palestra-secundario mb-1">Buscar por nombre, RUT (índice ciego), correo o especialidad</label>
+      <input type="text" id="id_q" name="q" value="{{ busqueda }}" class="form-control" placeholder="Ej.: Arancibia, 14.567.890-0, Atletismo">
+    </div>
+    <div class="flex gap-2">
+      <button type="submit" class="btn-palestra-primario">Buscar</button>
+      <a href="{% url 'deportes:lista_entrenadores' %}" class="btn-palestra-secundario">Limpiar</a>
+    </div>
+  </form>
+</section>
+
+<section class="bg-white rounded-lg shadow-sm border border-palestra-borde p-6">
+  {% if pagina_obj.object_list %}
+  <div class="tabla-contenedor">
+    <table class="tabla-palestra">
+      <thead>
+        <tr>
+          <th>Entrenador</th>
+          <th>RUT (descifrado)</th>
+          <th>Correo Institucional</th>
+          <th>Especialidad</th>
+          <th>Disciplinas Asignadas</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ent in pagina_obj %}
+        <tr>
+          <td class="font-semibold text-palestra-primario-900">{{ ent.nombre_completo }}</td>
+          <td class="text-sm">{{ ent.rut_formateado }}</td>
+          <td class="text-sm">{{ ent.usuario.email }}</td>
+          <td class="text-sm">{{ ent.especialidad }}</td>
+          <td class="text-sm">
+            {% for d in ent.disciplinas.all %}
+              <span class="insignia insignia-neutra">{{ d.nombre }}</span>
+            {% empty %}
+              <span class="text-xs text-palestra-secundario">Sin disciplinas</span>
+            {% endfor %}
+          </td>
+          <td>
+            {% if ent.activo %}
+            <span class="insignia insignia-exito">Activo</span>
+            {% else %}
+            <span class="insignia insignia-peligro">Inactivo</span>
+            {% endif %}
+          </td>
+          <td>
+            <div class="flex items-center gap-2">
+              <a href="{% url 'deportes:editar_entrenador' ent.id %}" class="btn-palestra-secundario py-1 px-3 text-xs">Editar</a>
+              <button
+                type="button"
+                class="btn-palestra-secundario py-1 px-3 text-xs"
+                data-url-accion="{% url 'deportes:cambiar_estado_entrenador' ent.id %}"
+                data-confirmar-accion="¿Confirma cambiar el estado del entrenador «{{ ent.nombre_completo }}»?"
+              >
+                {% if ent.activo %}Desactivar{% else %}Reactivar{% endif %}
+              </button>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="text-sm text-palestra-secundario m-0">No se encontraron entrenadores registrados.</p>
+  {% endif %}
+</section>
+{% endblock %}

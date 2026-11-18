@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block titulo %}Disciplinas Deportivas{% endblock %}
+{% block contenido %}
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+  <div>
+    <h1 class="text-2xl font-bold text-palestra-primario-900 m-0">Disciplinas Deportivas</h1>
+    <p class="text-sm text-palestra-secundario mt-1 mb-0">
+      Administración de disciplinas, horarios, lugares, entrenadores asignados y cupos máximos.
+    </p>
+  </div>
+  <div>
+    <a href="{% url 'deportes:crear_disciplina' %}" class="btn-palestra-primario">
+      <span>Nueva disciplina</span>
+    </a>
+  </div>
+</div>
+
+<!-- Busqueda y filtro -->
+<section class="bg-white rounded-lg shadow-sm border border-palestra-borde p-4 mb-6">
+  <form method="get" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+    <div>
+      <label for="id_q" class="block text-xs font-semibold uppercase text-palestra-secundario mb-1">Buscar por nombre o lugar</label>
+      <input type="text" id="id_q" name="q" value="{{ busqueda }}" class="form-control" placeholder="Ej.: Fútbol, Piscina, Gimnasio">
+    </div>
+    <div>
+      <label for="id_estado" class="block text-xs font-semibold uppercase text-palestra-secundario mb-1">Estado</label>
+      <select id="id_estado" name="estado" class="form-select">
+        <option value="">Todas</option>
+        <option value="activa" {% if estado_filtro == 'activa' %}selected{% endif %}>Activas</option>
+        <option value="inactiva" {% if estado_filtro == 'inactiva' %}selected{% endif %}>Inactivas</option>
+      </select>
+    </div>
+    <div class="flex gap-2">
+      <button type="submit" class="btn-palestra-primario flex-1">Filtrar</button>
+      <a href="{% url 'deportes:lista_disciplinas' %}" class="btn-palestra-secundario">Limpiar</a>
+    </div>
+  </form>
+</section>
+
+<!-- Tabla de disciplinas -->
+<section class="bg-white rounded-lg shadow-sm border border-palestra-borde p-6">
+  {% if pagina_obj.object_list %}
+  <div class="tabla-contenedor">
+    <table class="tabla-palestra">
+      <thead>
+        <tr>
+          <th>Disciplina</th>
+          <th>Horario</th>
+          <th>Lugar</th>
+          <th>Entrenador(es)</th>
+          <th>Ocupación de Cupo</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for disc in pagina_obj %}
+        <tr>
+          <td>
+            <strong class="text-palestra-primario-900 block">{{ disc.nombre }}</strong>
+            <span class="text-xs text-palestra-secundario">{{ disc.descripcion|truncatechars:65 }}</span>
+          </td>
+          <td class="text-sm">{{ disc.horario_formateado }}</td>
+          <td class="text-sm">{{ disc.lugar }}</td>
+          <td class="text-sm">
+            {% for ent in disc.entrenadores.all %}
+              <span class="insignia insignia-neutra">{{ ent.nombre_completo }}</span>
+            {% empty %}
+              <span class="text-xs text-palestra-secundario">Sin asignar</span>
+            {% endfor %}
+          </td>
+          <td class="text-sm font-medium">{{ disc.inscritos_activos }} / {{ disc.cupo_maximo }}</td>
+          <td>
+            {% if disc.activo %}
+            <span class="insignia insignia-exito">Activa</span>
+            {% else %}
+            <span class="insignia insignia-peligro">Inactiva</span>
+            {% endif %}
+          </td>
+          <td>
+            <div class="flex items-center gap-2">
+              <a href="{% url 'deportes:editar_disciplina' disc.id %}" class="btn-palestra-secundario py-1 px-3 text-xs">Editar</a>
+              <button
+                type="button"
+                class="btn-palestra-secundario py-1 px-3 text-xs"
+                data-url-accion="{% url 'deportes:cambiar_estado_disciplina' disc.id %}"
+                data-confirmar-accion="¿Confirma cambiar el estado de la disciplina «{{ disc.nombre }}»? El historial de sesiones e inscripciones se conservará íntegramente."
+              >
+                {% if disc.activo %}Desactivar{% else %}Reactivar{% endif %}
+              </button>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="text-sm text-palestra-secundario m-0">
+    No se encontraron disciplinas con los criterios seleccionados.
+  </p>
+  {% endif %}
+</section>
+{% endblock %}

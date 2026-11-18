@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block titulo %}Inscribir Estudiante{% endblock %}
+{% block contenido %}
+<div class="max-w-lg mx-auto bg-white rounded-lg shadow-sm border border-palestra-borde p-6 md:p-8">
+  <h1 class="text-2xl font-bold text-palestra-primario-900 mt-0 mb-2">
+    Inscribir estudiante en disciplina
+  </h1>
+  <p class="text-sm text-palestra-secundario mb-6">
+    El sistema verifica automáticamente que el estudiante y la disciplina estén activos, que existan cupos disponibles y que no exista una inscripción activa duplicada.
+  </p>
+
+  {% if formulario.non_field_errors %}
+  <div class="alert alert-danger" role="alert">
+    <span>{{ formulario.non_field_errors.0 }}</span>
+  </div>
+  {% endif %}
+
+  <form method="post" novalidate class="flex flex-col gap-4">
+    {% csrf_token %}
+    <div>
+      <label for="{{ formulario.estudiante.id_for_label }}" class="block text-sm font-semibold text-palestra-primario-900 mb-1">
+        {{ formulario.estudiante.label }}
+      </label>
+      {{ formulario.estudiante }}
+      {% if formulario.estudiante.errors %}<p class="text-xs text-palestra-peligro-500 mt-1 mb-0">{{ formulario.estudiante.errors.0 }}</p>{% endif %}
+    </div>
+
+    <div>
+      <label for="{{ formulario.disciplina.id_for_label }}" class="block text-sm font-semibold text-palestra-primario-900 mb-1">
+        {{ formulario.disciplina.label }}
+      </label>
+      {{ formulario.disciplina }}
+      {% if formulario.disciplina.errors %}<p class="text-xs text-palestra-peligro-500 mt-1 mb-0">{{ formulario.disciplina.errors.0 }}</p>{% endif %}
+    </div>
+
+    <div class="flex items-center justify-end gap-3 pt-4 border-t border-palestra-borde mt-2">
+      <a href="{% url 'deportes:lista_inscripciones' %}" class="btn-palestra-secundario">Cancelar</a>
+      <button type="submit" class="btn-palestra-primario">Confirmar inscripción</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

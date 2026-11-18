@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block titulo %}{% if modo_edicion %}Editar Estudiante{% else %}Nuevo Estudiante{% endif %}{% endblock %}
+{% block contenido %}
+<div class="max-w-2xl mx-auto bg-white rounded-lg shadow-sm border border-palestra-borde p-6 md:p-8">
+  <h1 class="text-2xl font-bold text-palestra-primario-900 mt-0 mb-2">
+    {% if modo_edicion %}Editar estudiante: {{ estudiante.nombre_completo }}{% else %}Registrar nuevo estudiante{% endif %}
+  </h1>
+  <p class="text-sm text-palestra-secundario mb-6">
+    Los datos personales sensibles (RUT y teléfono) se cifran automáticamente antes de almacenarse en la base de datos.
+  </p>
+
+  <form method="post" novalidate class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {% csrf_token %}
+    <div>
+      <label for="{{ formulario.rut.id_for_label }}" class="block text-sm font-semibold text-palestra-primario-900 mb-1">RUT chileno</label>
+      {{ formulario.rut }}
+      {% if formulario.rut.errors %}<p class="text-xs text-palestra-peligro-500 mt-1 mb-0">{{ formulario.rut.errors.0 }}</p>{% endif %}
+    </div>
+
+    <div>
+      <label for="{{ formulario.correo.id_for_label }}" class="block text-sm font-semibold text-palestra-primario-900 mb-1">{{ formulario.correo.label }}</label>
+      {{ formulario.correo }}
+      {% if formulario.correo.errors %}<p class="text-xs text-palestra-peligro-500 mt-1 mb-0">{{ formulario.correo.errors.0 }}</p>{% endif %}
+    </div>
+
+    <div>
+      <label for="{{ formulario.nombres.id_for_label }}" class="block text-sm font-semibold text-palestra-primario-900 mb-1">{{ formulario.nombres.label }}</label>
+      {{ formulario.nombres }}
+      {% if formulario.nombres.errors %}<p class="text-xs text-palestra-peligro-500 mt-1 mb-0">{{ formulario.nombres.errors.0 }}</p>{% endif %}
+    </div>
+
+    <div>
+      <label for="{{ formulario.apellidos.id_for_label }}" class="block text-sm font-semibold text-palestra-primario-900 mb-1">{{ formulario.apellidos.label }}</label>
+      {{ formulario.apellidos }}
+      {% if formulario.apellidos.errors %}<p class="text-xs text-palestra-peligro-500 mt-1 mb-0">{{ formulario.apellidos.errors.0 }}</p>{% endif %}
+    </div>
+
+    <div>
+      <label for="{{ formulario.curso_o_carrera.id_for_label }}" class="block text-sm font-semibold text-palestra-primario-900 mb-1">{{ formulario.curso_o_carrera.label }}</label>
+      {{ formulario.curso_o_carrera }}
+      {% if formulario.curso_o_carrera.errors %}<p class="text-xs text-palestra-peligro-500 mt-1 mb-0">{{ formulario.curso_o_carrera.errors.0 }}</p>{% endif %}
+    </div>
+
+    <div>
+      <label for="{{ formulario.telefono.id_for_label }}" class="block text-sm font-semibold text-palestra-primario-900 mb-1">Teléfono (opcional)</label>
+      {{ formulario.telefono }}
+      {% if formulario.telefono.errors %}<p class="text-xs text-palestra-peligro-500 mt-1 mb-0">{{ formulario.telefono.errors.0 }}</p>{% endif %}
+    </div>
+
+    {% if not modo_edicion %}
+    <div style="grid-column: span 2 / span 2;">
+      <label class="block text-sm font-semibold text-palestra-primario-900 mb-2">{{ formulario.modo_creacion_cuenta.label }}</label>
+      <div class="p-3 bg-palestra-fondo rounded border border-palestra-borde text-sm">
+        {{ formulario.modo_creacion_cuenta }}
+      </div>
+    </div>
+    {% endif %}
+
+    <div style="grid-column: span 2 / span 2;" class="flex items-center gap-2 pt-2">
+      {{ formulario.activo }}
+      <label for="{{ formulario.activo.id_for_label }}" class="text-sm font-medium">Estudiante activo</label>
+    </div>
+
+    <div style="grid-column: span 2 / span 2;" class="flex items-center justify-end gap-3 pt-4 border-t border-palestra-borde">
+      <a href="{% url 'deportes:lista_estudiantes' %}" class="btn-palestra-secundario">Cancelar</a>
+      <button type="submit" class="btn-palestra-primario">
+        {% if modo_edicion %}Guardar cambios{% else %}Registrar estudiante{% endif %}
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}
