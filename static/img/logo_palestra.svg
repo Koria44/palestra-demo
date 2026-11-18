@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="Isotipo PALESTRA">
+  <rect x="4" y="4" width="56" height="56" rx="12" fill="#0B2545"/>
+  <path d="M18 46V18H34C40.6274 18 46 23.3726 46 30C46 36.6274 40.6274 42 34 42H26V46H18Z" fill="#FFFFFF"/>
+  <path d="M26 25V35H33.5C36.5376 35 39 32.5376 39 29.5C39 26.4624 36.5376 25 33.5 25H26Z" fill="#0B2545"/>
+  <path d="M32 46L40 38H48L40 46H32Z" fill="#1B998B"/>
+</svg>

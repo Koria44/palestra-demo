@@ -1,0 +1,28 @@
+/* Fuente de entrada de estilos de PALESTRA (Tailwind CSS + Tokens Bootstrap 5) */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary-900: #0B2545;
+  --color-primary-700: #13315C;
+  --color-primary-500: #1D4E89;
+  --color-accent-500: #1B998B;
+  --color-highlight-500: #E9A23B;
+  --color-danger-500: #C8433A;
+  --color-surface: #FFFFFF;
+  --color-background: #F4F6F9;
+  --color-border: #D9DFE7;
+  --color-text: #1F2933;
+  --color-text-muted: #5B6776;
+
+  /* Mapeo hacia variables de Bootstrap 5 */
+  --bs-primary: #1D4E89;
+  --bs-success: #1B998B;
+  --bs-warning: #E9A23B;
+  --bs-danger: #C8433A;
+  --bs-body-bg: #F4F6F9;
+  --bs-body-color: #1F2933;
+  --bs-border-color: #D9DFE7;
+  --bs-font-sans-serif: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
